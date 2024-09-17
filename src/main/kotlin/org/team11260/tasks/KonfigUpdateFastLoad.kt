@@ -8,13 +8,12 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.TaskAction
-import org.gradle.process.internal.ExecException
 import java.io.File
 
 /**
  * Uses ADB to copy the merged dex jar to the robot controller.
  */
-abstract class AutonomousUpdate : DefaultTask() {
+abstract class KonfigUpdateFastLoad : DefaultTask() {
 
     @InputDirectory
     abstract fun getOutputDir(): DirectoryProperty
@@ -30,7 +29,7 @@ abstract class AutonomousUpdate : DefaultTask() {
 
     @TaskAction
     fun execute() {
-        val autonomous = File(project.projectDir, "autonomous")
+        val autonomous = File(project.projectDir, "konfig")
         if (!autonomous.exists()) {
             error("The autonomous file does not exist.")
         }
@@ -42,21 +41,15 @@ abstract class AutonomousUpdate : DefaultTask() {
             return
         }
 
-        try {
-
-            project.exec {
-                files.forEach { file ->
-                    it.commandLine(
-                        getAdbExecutable().get(),
-                        "push",
-                        file.absolutePath + "/settings/",
-                        getDeployLocation().get(),
-                    )
-                }
-
+        project.exec {
+            files.forEach { file ->
+                it.commandLine(
+                    getAdbExecutable().get(),
+                    "push",
+                    file.absolutePath,
+                    getDeployLocation().get() + "settings/",
+                )
             }
-        } catch (e: ExecException) {
-            error("Failed to connect to robot, ensure ADB connected to robot.")
         }
     }
 }

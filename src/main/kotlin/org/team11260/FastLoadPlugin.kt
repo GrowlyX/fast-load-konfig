@@ -53,7 +53,7 @@ class FastLoadPlugin : Plugin<Project> {
             task.dependsOn(assembleFastLoad)
         }
 
-        val autonomousUpdate = project.tasks.register("autonomousUpdate", AutonomousUpdate::class.java) { task ->
+        val konfigUpdateFastLoad = project.tasks.register("konfigUpdate", KonfigUpdateFastLoad::class.java) { task ->
             task.group = "install"
 
             task.getAdbExecutable().convention(extension.getAdbExecutable())
