@@ -4,8 +4,8 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.0'
 }
 
-group = 'org.team11260'
-version = '0.1.2'
+group = 'io.liftgate'
+version = '0.1.3'
 
 
 java {
@@ -26,7 +26,7 @@ dependencies {
 publishing {
     publications {
         library(MavenPublication) {
-            groupId = 'org.team11260'
+            groupId = 'io.liftgate'
             artifactId = 'fast-load-plugin'
 
             from components.java
@@ -52,7 +52,13 @@ publishing {
     }
     repositories {
         maven {
-            url = providers.gradleProperty('matthewo.publish.secret').getOrElse("")
+            name "scala"
+            url "${property("artifactory_contextUrl")}/opensource"
+
+            credentials {
+                username property("artifactory_user")
+                password property("artifactory_password")
+            }
         }
     }
 }
@@ -60,7 +66,7 @@ publishing {
 gradlePlugin {
     plugins {
         fastload {
-            id = 'org.team11260.fast-load-plugin'
+            id = 'io.liftgate.fast-load-plugin'
             implementationClass = 'org.team11260.FastLoadPlugin'
             displayName = 'FastLoad'
             description = 'Allows for hot swapping Team Code without restarting FtcRobotController'
