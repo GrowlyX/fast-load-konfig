@@ -1,4 +1,4 @@
-package org.team11260.tasks
+package org.team11260.tasks.konfig
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
@@ -10,10 +10,7 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
-/**
- * Uses ADB to copy the merged dex jar to the robot controller.
- */
-abstract class KonfigUpdateFastLoad : DefaultTask() {
+abstract class KonfigPullFiles : DefaultTask() {
 
     @InputDirectory
     abstract fun getOutputDir(): DirectoryProperty
@@ -35,21 +32,18 @@ abstract class KonfigUpdateFastLoad : DefaultTask() {
         }
 
         val files = autonomous.listFiles() ?: arrayOf()
-        if (files.isEmpty())
+        for (file in files)
         {
-            project.logger.info("No autonomous updated")
-            return
+            file.delete()
         }
 
         project.exec {
-            files.forEach { file ->
-                it.commandLine(
-                    getAdbExecutable().get(),
-                    "push",
-                    file.absolutePath,
-                    getDeployLocation().get() + "settings/",
-                )
-            }
+            it.commandLine(
+                getAdbExecutable().get(),
+                "pull",
+                getDeployLocation().get() + "settings/",
+                autonomous.absolutePath
+            )
         }
     }
 }

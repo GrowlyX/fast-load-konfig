@@ -4,6 +4,8 @@ import com.android.build.api.variant.AndroidComponentsExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.team11260.tasks.*
+import org.team11260.tasks.konfig.KonfigPullFiles
+import org.team11260.tasks.konfig.KonfigPushFiles
 
 const val DEX_BASE_NAME_CONVENTION = "FastLoadDex"
 const val BUNDLE_BASE_NAME_CONVENTION = "FastLoadBundle"
@@ -53,7 +55,16 @@ class FastLoadPlugin : Plugin<Project> {
             task.dependsOn(assembleFastLoad)
         }
 
-        val konfigUpdateFastLoad = project.tasks.register("konfigUpdate", KonfigUpdateFastLoad::class.java) { task ->
+        val konfigPushFiles = project.tasks.register("konfigUpdate", KonfigPushFiles::class.java) { task ->
+            task.group = "install"
+
+            task.getAdbExecutable().convention(extension.getAdbExecutable())
+            task.getOutputDir().convention(extension.getOutputDir())
+            task.getBundleBaseName().convention(extension.getBundleBaseName())
+            task.getDeployLocation().convention(extension.getDeployLocation())
+        }
+
+        val konfigPullFiles = project.tasks.register("konfigPull", KonfigPullFiles::class.java) { task ->
             task.group = "install"
 
             task.getAdbExecutable().convention(extension.getAdbExecutable())
