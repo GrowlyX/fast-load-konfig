@@ -38,8 +38,8 @@ abstract class KonfigPushFiles : DefaultTask() {
             return
         }
 
-        project.exec {
-            files.forEach { file ->
+        files.forEach { file ->
+            project.exec {
                 it.commandLine(
                     getAdbExecutable().get(),
                     "push",
@@ -47,6 +47,7 @@ abstract class KonfigPushFiles : DefaultTask() {
                     getDeployLocation().get() + "settings/",
                 )
             }
+
         }
     }
 }

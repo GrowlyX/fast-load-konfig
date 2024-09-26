@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'io.liftgate'
-version = '0.1.7'
+version = '0.1.8'
 
 
 java {
@@ -51,6 +51,7 @@ publishing {
         }
     }
     repositories {
+        mavenLocal()
         maven {
             name "scala"
             url "${property("artifactory_contextUrl")}/opensource"
