@@ -10,7 +10,8 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
-abstract class KonfigPullFiles : DefaultTask() {
+abstract class KonfigPullFiles : DefaultTask()
+{
 
     @InputDirectory
     abstract fun getOutputDir(): DirectoryProperty
@@ -25,10 +26,12 @@ abstract class KonfigPullFiles : DefaultTask() {
     abstract fun getDeployLocation(): Property<String>
 
     @TaskAction
-    fun execute() {
+    fun execute()
+    {
         val autonomous = File(project.projectDir, "konfig")
-        if (!autonomous.exists()) {
-            error("The autonomous file does not exist.")
+        if (!autonomous.exists())
+        {
+            autonomous.mkdirs()
         }
 
         val files = autonomous.listFiles() ?: arrayOf()
@@ -37,13 +40,32 @@ abstract class KonfigPullFiles : DefaultTask() {
             file.delete()
         }
 
+        val primerDirectory = File(project.buildDir, "primer")
+        if (primerDirectory.exists())
+        {
+            primerDirectory.deleteRecursively()
+        }
+
+        primerDirectory.mkdirs()
+
         project.exec {
             it.commandLine(
                 getAdbExecutable().get(),
                 "pull",
                 getDeployLocation().get() + "settings/",
-                autonomous.absolutePath
+                primerDirectory.absolutePath
             )
+        }
+
+        val settingsDirectory = File(primerDirectory, "settings")
+        settingsDirectory.listFiles()?.forEach {
+            val newFile = File(autonomous, it.name)
+            if (!it.exists())
+            {
+                it.createNewFile()
+            }
+
+            newFile.writeBytes(it.readBytes())
         }
     }
 }
